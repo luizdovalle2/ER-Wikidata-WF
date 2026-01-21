@@ -13,14 +13,6 @@ import swifter
 from abydos import phonetic
 
 
-# -----------------------------------------------------------------------------
-# Worker function executed in parallel by multiprocessing.Pool
-# IMPORTANT:
-# - Pool workers must receive *all* required data via their arguments.
-# - Do NOT rely on a free variable like `metric` inside this function, because
-#   each process has its own memory space and you can easily get NameError or
-#   inconsistent behavior.
-# -----------------------------------------------------------------------------
 def compute_distance(args):
     """
     Compute a distance between two tokens/strings given their indices.
@@ -72,7 +64,7 @@ def distance_metrics_calculator(words, metric):
     words : list[str]
         Vocabulary of unique tokens/words.
     metric : str
-        Distance metric name: 'jw' (Jaro–Winkler normalized distance) or
+        Distance metric name: e.g., 'jw' (Jaro–Winkler normalized distance) or
         'lev' (Levenshtein edit distance).
 
     Returns
@@ -135,9 +127,6 @@ def build_phonetic_matched_frozensets(
     metric:
         Phonetic metric identifier. Currently supports:
         - "dm": Daitch–Mokotoff (Abydos phonetic.DaitchMokotoff)
-    use_swifter:
-        If True and `words` is a pandas Series, use `words.swifter.apply(...)` for faster
-        encoding when available. Otherwise falls back to `.apply(...)`.
 
     Returns
     -------
@@ -146,16 +135,7 @@ def build_phonetic_matched_frozensets(
         where `id_i != id_j`.
 
         - If `words` is a Series: ids are `words.index` values.
-        - If `words` is a list: ids are integer positions [0..n-1].
-
-    Notes
-    -----
-    - Abydos Daitch–Mokotoff `encode()` returns a *set* of codes for a word (some words
-      can have multiple phonetic encodings). This is why we treat encodings as sets
-      and build an inverted index over all codes. [web:57]
-    - This function returns **pairs of identifiers** (usually indices). If later code
-      expects frozensets of actual string tokens instead, convert at the end via
-      `frozenset({words[id_i], words[id_j]})`.
+        - If `words` is a list: ids are integer positions [0..n-1].`.
     """
     # Normalize input to a pandas Series so we can reliably keep stable identifiers.
     if isinstance(words, pd.Series):
@@ -237,16 +217,13 @@ def sorensen_dice_coverage(
 ):
     """
     Compute a Dice–Sørensen *coverage* score between two token lists, using a
-    precomputed set of allowable cross-token matches.
-
-    This is the same idea as your current `proportion_coverage`, but expressed
-    explicitly as the **Dice–Sørensen coefficient**:
+    precomputed set of allowable cross-token matches:
 
         DSC = 2 * |M| / (|A| + |B|)
 
     where:
-    - A = tokens from the label (e.g., CAC heading components)
-    - B = tokens from the alias (e.g., ALMA heading components)
+    - A = tokens from the label 
+    - B = tokens from the alias 
     - M = the set of matched token pairs chosen by a greedy matching procedure
           (each token can be used at most once)
 
@@ -261,8 +238,6 @@ def sorensen_dice_coverage(
        - the pair is in `matched_frozensets` (e.g., JW/LEV/phonetic match list)
     2) We do a greedy 1-to-1 matching: once a token is matched, it is removed
        from further consideration. This mirrors your original implementation.
-    3) The formula used is the standard Dice–Sørensen definition:
-       2|X∩Y| / (|X|+|Y|). [web:91]
 
     Parameters
     ----------
@@ -328,7 +303,7 @@ def row_coverage_calculator(row, df_to_match, treshold, matched_frozensets, list
         Candidate rows from the “right” dataframe (often the alias side). Must
         include `key` and the list-valued column named by `list_2_name`.
     treshold : float
-        Minimum accepted coverage score. (Spelling preserved to match your code.)
+        Minimum accepted coverage score. (used for reducing memory consumption)
     matched_frozensets : set[frozenset[str]]
         Set of allowed approximate token matches (e.g., from JW/LEV/DM/BM token
         pairing), represented as frozenset({token_a, token_b}).
