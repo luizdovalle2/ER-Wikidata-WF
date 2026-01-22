@@ -43,10 +43,11 @@ Output:
 
 ### 4) Train and Evaluate Tree-based Ensembles
 Open and run:
-- `4.-RF_and_XGB_train_and_crossvalidation.ipynb`
+- `4-rf-xgb-notebook.ipynb`
 
 Inputs:
-- `merged_weigths.parquet`: Dataset containing calculated similarity metrics and labels (generated in Step 1).
+- `wd_dataset.parquet`: The main dataset generated in Step 1 (used to create train/validation splits).
+- `df_merged.parquet`: The merged dataset that can be divided into train and test
 
 Outputs:
 - `figures/roc_rf_similarity.pdf`: ROC curve for Random Forest.
@@ -55,11 +56,11 @@ Outputs:
 
 ### 5) Neural Baseline evaluation (LaBSE)
 Open and run:
-- `5.-labse_cross_validation_small_finetune.ipynb`: reproduces the ROC curve and metrics for the comparison on the limited subset (Figure 4c, Table 6).
-- `6.-labse_cross_validation_big_finetune.ipynb`: reproduces the results for the full-dataset experiment (Table 7).
+- `5.-labse_cross_validation_small_finetune.ipynb`: reproduces the ROC curve and metrics for the comparison on the limited subset (Figure 4c, Table 6). Via the FULL_TEST (setting it to True) variable can reproduce the results for the full-dataset experiment (Table 7).
 
 Inputs:
 - `wd_dataset.parquet`: The main dataset generated in Step 1 (used to create train/validation splits).
+- `df_merged.parquet`: The merged dataset that can be divided into train and test
 
 Outputs:
 - `figures/roc_labse_similarity_smaller_tuning.pdf`: ROC curve for the small subset experiment.
