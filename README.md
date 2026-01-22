@@ -10,7 +10,7 @@ This repo contains three notebooks + a helper module to reproduce the metric eva
 - `2.-distance_calculation.ipynb`: for each configuration (DM/BM/JW/LEV/NLEV), builds token-match sets and computes Dice–Sørensen coverage; writes one parquet per config.
 - `3.-metrics_comparison.ipynb`: loads all saved config outputs and selects the best coverage threshold by F2/recall (as in the paper).
 - `4. rf-xgb-notebook.ipynb`: trains Random Forest and XGBoost classifiers using 5-fold cross-validation. Generates ROC curves (Fig. 4a/b) and performance tables (Tables 3 & 4).
-- `5. labse_cross_validation_small_finetune.ipynb`: fine-tunes LaBSE on the limited balanced subset (direct comparability with Tree-based ensembles) and on the full training dataset (scalability and performance upper bound).
+- `5. labse_cross_validation.ipynb`: fine-tunes LaBSE on the limited balanced subset (direct comparability with Tree-based ensembles) and on the full training dataset (scalability and performance upper bound).
 - `functions_for_metrics.py`: shared functions (distance matrices, phonetic matching, Dice–Sørensen coverage, row scoring).
 
 ## Run order
@@ -55,7 +55,7 @@ Outputs:
 
 ### 5) Neural Baseline evaluation (LaBSE)
 Open and run:
-- `5. labse_cross_validation_small_finetune.ipynb`: reproduces the ROC curve and metrics for the comparison on the limited subset (Figure 4c, Table 6). Via the FULL_TEST (setting it to True) variable can reproduce the results for the full-dataset experiment (Table 7).
+- `5. labse_cross_validation.ipynb`: reproduces the ROC curve and metrics for the comparison on the limited subset (Figure 4c, Table 6). Via the FULL_TEST (setting it to True) variable can reproduce the results for the full-dataset experiment (Table 7).
 
 Inputs:
 - `wd_dataset.parquet`: The main dataset generated in Step 1 (used to create train/validation splits).
